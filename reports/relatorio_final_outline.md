@@ -2,7 +2,7 @@
 
 > **Disciplina:** Introdução à Ciência de Dados (ICD) — Curso de Análise e Desenvolvimento de Sistemas (ADS)
 > **Item do projeto:** 2.6 (Relatório final, 4–8 páginas)
-> **Autores:** Nicolas Ferreira Villela Pereira; Herick
+> **Autores:** Nicolas; Herick
 > **Data:** _(preencher)_
 > **Repositório:** _(preencher link do GitHub — ver Seção 7)_
 >

@@ -155,7 +155,7 @@ Acurácia esperada do *transfer learning* em cartas: **~93–95%** (referência 
 
 ## 👥 Autores
 
-- **Nicolas Ferreira Villela Pereira**
+- **Nicolas**
 - **Herick**
 
 Projeto desenvolvido para a disciplina de IA/ML/DL (ICD/ADS).
