@@ -1,0 +1,56 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.Python
+
+# ===== Ambientes virtuais =====
+.venv/
+venv/
+env/
+ENV/
+
+# ===== Jupyter / Colab =====
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# ===== Dados (NAO versionar imagens brutas; usar instrucoes de download) =====
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+*.zip
+*.tar
+*.tar.gz
+
+# ===== Modelos treinados (pesados; usar Releases ou link externo) =====
+models/*
+!models/.gitkeep
+*.pt
+*.pth
+*.h5
+*.keras
+*.onnx
+*.tflite
+*.pkl
+
+# ===== Saidas / logs =====
+runs/
+logs/
+wandb/
+*.log
+outputs/
+
+# ===== Sistema operacional =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
