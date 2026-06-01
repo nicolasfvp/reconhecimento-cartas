@@ -153,6 +153,15 @@ Acurácia esperada do *transfer learning* em cartas: **~93–95%** (referência 
 
 ---
 
+## 👥 Autores
+
+- **Nicolas Ferreira Villela Pereira**
+- **Herick**
+
+Projeto desenvolvido para a disciplina de IA/ML/DL (ICD/ADS).
+
+---
+
 ## 📄 Licença
 
 Código sob licença [MIT](LICENSE). O dataset do Kaggle possui licença própria
