@@ -52,13 +52,19 @@ def _run_epoch(model, loader, criterion, device, optimizer=None):
     return total_loss / total, correct / total
 
 
-def _train_phase(model, loaders, criterion, optimizer, device, epochs, patience, history, phase_name):
-    """Treina uma fase com early stopping; retorna o melhor state_dict e acc."""
+def _train_phase(model, loaders, criterion, optimizer, device, epochs, patience, history, phase_name,
+                 scheduler=None):
+    """Treina uma fase com early stopping; retorna o melhor state_dict e acc.
+
+    Se scheduler for fornecido, faz scheduler.step() ao fim de cada epoca.
+    """
     best_acc, best_state, epochs_no_improve = -1.0, None, 0
     for epoch in range(1, epochs + 1):
         t0 = time.time()
         tr_loss, tr_acc = _run_epoch(model, loaders["train"], criterion, device, optimizer)
         va_loss, va_acc = _run_epoch(model, loaders["valid"], criterion, device, optimizer=None)
+        if scheduler is not None:
+            scheduler.step()
         dt = time.time() - t0
         history.append(
             {
@@ -140,9 +146,13 @@ def train_model(cfg: Config):
         optimizer = torch.optim.AdamW(
             model.parameters(), lr=cfg.lr_finetune, weight_decay=cfg.weight_decay
         )
+        # Cosine annealing: LR alto no inicio (convergencia rapida) decaindo
+        # suavemente ate ~0, para um ajuste fino estavel no fim do treino.
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epochs_finetune)
         ft_state, ft_acc = _train_phase(
             model, loaders, criterion, optimizer, device,
             cfg.epochs_finetune, cfg.early_stop_patience, history, "finetune",
+            scheduler=scheduler,
         )
         if ft_state is not None and ft_acc >= best_acc:
             best_state, best_acc = ft_state, ft_acc

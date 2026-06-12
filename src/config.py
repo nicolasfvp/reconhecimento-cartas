@@ -38,11 +38,11 @@ class Config:
     # Fase 1 (feature extraction): backbone congelado, treina so a cabeca.
     epochs_head: int = 8
     lr_head: float = 1e-3
-    # Fase 2 (fine-tuning): descongela o backbone com LR menor que o da cabeca
-    # (mas NAO baixo demais: 1e-5 sub-treina o EfficientNet-B0 neste dataset).
+    # Fase 2 (fine-tuning): descongela o backbone. LR de pico com cosine annealing
+    # (decai ate ~0). 1e-5/5ep sub-treina; 3e-4/20ep converge perto do teto (~95%).
     finetune: bool = True
-    epochs_finetune: int = 12
-    lr_finetune: float = 1e-4
+    epochs_finetune: int = 20
+    lr_finetune: float = 3e-4
 
     weight_decay: float = 1e-4
     label_smoothing: float = 0.0
