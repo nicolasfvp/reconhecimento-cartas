@@ -20,9 +20,16 @@ Checklist das etapas que precisam de ação humana para concluir o projeto.
 - [x] **4. Rodar o notebook no Google Colab (GPU T4)**
   `notebooks/treino_cartas_colab.ipynb` executado: setup → dataset → EDA → baseline → treino → avaliação → experimentos.
 
-- [ ] **5. Fotografar 1 baralho real (conjunto de teste OOD)**
-  Seguir `docs/guia_coleta_baralho_real.md` (nomes de pasta exatos + nota de privacidade/LGPD).
-  Rodar de novo a célula de avaliação OOD do notebook para medir o *gap* de domínio.
+- [x] **5. Montar o conjunto de teste OOD ("design diferente", web)**
+  Em vez de fotografar (sem tempo), usamos um baralho de **design diferente** com imagens limpas
+  de licença livre, gerado por `python -m src.ood_design --out data/raw/ood_design_web`
+  (53 classes, nomes de pasta exatos). Mede o **gap de design**. A célula 8 do notebook já o monta e avalia.
+  Guia: `docs/guia_ood_design_web.md`.
+
+- [ ] **5b. (Opcional / trabalho futuro) Fotografar 1 baralho real — gap de captura**
+  Padrão-ouro: seguir `docs/guia_coleta_baralho_real.md` (nomes de pasta exatos + LGPD), pôr em
+  `data/raw/ood_baralho_real/`, ajustar `OOD_DIR` no notebook e medir o gap de **condições de captura**
+  (que o OOD de design não cobre).
 
 - [ ] **6. Preencher as métricas reais**
   Substituir os campos *"(preencher após o treino)"* em `README.md`, `docs/MODEL_CARD.md` e

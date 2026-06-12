@@ -65,7 +65,7 @@ projeto-IA/
 
 1. **Feature extraction (congelado) vs fine-tuning** — impacto na acurácia/overfitting.
 2. **Com vs sem *data augmentation*** — efeito na generalização.
-3. **Avaliação OOD** — teste do Kaggle vs **fotos de um baralho real** (mede o *gap* de domínio).
+3. **Avaliação OOD** — teste do Kaggle vs **um baralho de design diferente** (imagens limpas da web); mede o *gap de design* (o modelo aprendeu o conceito da carta ou decorou o estilo do dataset?). O *gap de condições de captura* (fotos reais com luz/sombra/fundo) fica como trabalho futuro — ver [`docs/guia_coleta_baralho_real.md`](docs/guia_coleta_baralho_real.md).
 
 ---
 
@@ -75,8 +75,11 @@ projeto-IA/
 — 53 classes, imagens 224×224 já recortadas, split pronto (7.624 / 265 / 265).
 Detalhes e download em [`data/README.md`](data/README.md).
 
-Para o experimento de generalização, você fotografará um baralho real seu — guia em
-[`docs/guia_coleta_baralho_real.md`](docs/guia_coleta_baralho_real.md).
+Para o experimento de generalização (OOD), usamos um **baralho de design diferente** montado
+a partir de imagens limpas de licença livre — script reprodutível `src/ood_design.py` e
+guia em [`docs/guia_ood_design_web.md`](docs/guia_ood_design_web.md). Fotografar um baralho
+físico real (gap de captura) continua sendo o padrão-ouro e está descrito, como trabalho
+futuro, em [`docs/guia_coleta_baralho_real.md`](docs/guia_coleta_baralho_real.md).
 
 ---
 
@@ -122,12 +125,17 @@ python -m src.predict caminho/para/carta.jpg --checkpoint models/efficientnet_b0
 
 Acurácia esperada do *transfer learning* em cartas: **~93–95%** (referência da literatura).
 
+> A coluna **Acurácia OOD** refere-se ao baralho de **design diferente** (imagens limpas da web),
+> medindo o *gap de design* — não a um baralho fotografado em condições reais (gap de captura,
+> trabalho futuro). Ver Experimento 3 e `docs/guia_ood_design_web.md`.
+
 ---
 
 ## ⚠️ Limitações
 
-- Modelo treinado em **um único tipo de baralho/estilo** → pode falhar com outros designs,
-  iluminação ruim, oclusão ou fundos complexos (ver experimento OOD).
+- Modelo treinado em **um único tipo de baralho/estilo** → pode falhar com outros designs
+  (medido no experimento OOD), e também com iluminação ruim, oclusão ou fundos complexos
+  (gap de captura **não** medido aqui — exige fotos reais; ver trabalhos futuros).
 - Conjuntos de validação/teste do dataset são pequenos (5 imagens/classe) → métricas ruidosas.
 - Classificação assume **uma carta por imagem**; não detecta múltiplas cartas na cena
   (detecção via YOLO fica como **trabalho futuro**).
@@ -137,6 +145,8 @@ Acurácia esperada do *transfer learning* em cartas: **~93–95%** (referência 
 ## 🔭 Trabalhos futuros
 
 - Detecção de múltiplas cartas na cena (YOLOv8/YOLO11).
+- **Conjunto OOD com fotos reais** (gap de captura): fotografar um baralho físico sob luz/fundo/ângulo
+  variados, complementando o atual OOD de "design diferente" (que mede só o gap de design).
 - Coleta de dataset mais diverso (vários baralhos, iluminações, oclusão).
 - App de leitura por voz (modo assistivo) com processamento *on-device*.
 
@@ -148,7 +158,8 @@ Acurácia esperada do *transfer learning* em cartas: **~93–95%** (referência 
 - [Dados e preparação](docs/02_dados.md) (item 2.2)
 - [Avaliação ética e impacto](docs/03_etica_impacto.md) (item 2.5)
 - [Model Card](docs/MODEL_CARD.md)
-- [Guia de coleta do baralho real (OOD)](docs/guia_coleta_baralho_real.md)
+- [Guia do conjunto OOD "design diferente" (web)](docs/guia_ood_design_web.md) — usado na entrega atual
+- [Guia de coleta do baralho real (gap de captura — trabalho futuro)](docs/guia_coleta_baralho_real.md)
 - [Esqueleto do relatório final](reports/relatorio_final_outline.md) (itens 2.6 e 2.7)
 
 ---

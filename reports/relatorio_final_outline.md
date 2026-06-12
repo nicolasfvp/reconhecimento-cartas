@@ -35,7 +35,7 @@
 
 > **Orientação — preencher e referenciar `docs/dados.md`:**
 > - Descreva o **dataset principal**: "Cards Image Dataset-Classification" (autor *gpiosenka*, Kaggle), 53 classes, imagens 224×224×3 já recortadas, split pronto **train/valid/test = 7.624 / 265 / 265** (5 imagens por classe em validação e teste). Mencione a licença marcada como **"Other"** no Kaggle e a necessidade de **confirmar antes de redistribuir** (por isso `data/` contém apenas instruções, não as imagens).
-> - Descreva o **conjunto OOD**: fotos de **1 baralho real próprio** que você vai fotografar, usado apenas para avaliação de generalização. Documente quantas fotos, condições de iluminação, fundo e dispositivo de captura.
+> - Descreva o **conjunto OOD**: um **baralho de design diferente** montado a partir de imagens limpas de licença livre (web), via `src/ood_design.py`, usado apenas para avaliação de generalização. Deixe claro que mede o **gap de design** (estilo de carta diferente), e **não** o gap de condições de captura (fotos reais) — este último é trabalho futuro. Documente a fonte/licença das imagens e quantas classes/imagens.
 > - Detalhe o **pré-processamento e data augmentation**: normalização ImageNet, resize/center-crop, e (no experimento de augmentation) flips/rotações/jitter de cor — descreva exatamente o que `src/data.py` aplica.
 > - Detalhe os **modelos**: EfficientNet-B0 (Fase 1: backbone congelado / *feature extraction*; Fase 2: *fine-tuning* do topo com LR baixo) e o baseline HOG + Regressão Logística (scikit-learn). Referencie o **model card** (`docs/model_card.md`).
 
@@ -52,13 +52,15 @@
 
 _(preencher comentário sobre balanceamento e qualidade do dataset)_
 
-### 2.2 Conjunto OOD (baralho real próprio)
+### 2.2 Conjunto OOD (baralho de design diferente — web)
 
-> **Orientação:** descreva a coleta. Sugestão de campos a preencher: nº total de fotos, nº de cartas fotografadas, dispositivo (celular/câmera), condições (luz natural/artificial, fundo, ângulo). Reforce que serve **só para avaliação**, nunca para treino.
+> **Orientação:** descreva o conjunto OOD usado nesta entrega. Ele é um baralho de **design diferente** do de treino, montado a partir de **imagens limpas de licença livre** (`src/ood_design.py`), não de fotos do mundo real. Seja honesto sobre o que ele mede (gap de design) e o que não mede (gap de captura). Reforce que serve **só para avaliação**, nunca para treino.
 
-- Nº de fotos: **(preencher)**
-- Dispositivo de captura: **(preencher)**
-- Condições (luz/fundo/ângulo): **(preencher)**
+- Origem das imagens: baralho derivado do projeto *Vector Playing Cards* (domínio público), via repositório *playing-cards-assets* (Howard Yeh, MIT). **Não** são fotos tiradas pelos autores.
+- Nº de classes / imagens: **53 classes / 54 imagens** (1 por carta + 2 coringas na classe `joker`).
+- O que mede: **gap de design** (estilo de carta diferente do treino).
+- O que **não** mede: gap de **condições de captura** (luz, sombra, fundo, ângulo de fotos reais). Como são renders limpos, o gap medido é um **limite inferior** do esperado em uso real.
+- Trabalho futuro: repetir com **fotos de um baralho físico** (`docs/guia_coleta_baralho_real.md`) para medir o gap de captura.
 
 ### 2.3 Pré-processamento e data augmentation
 
@@ -81,15 +83,15 @@ _(preencher comentário sobre balanceamento e qualidade do dataset)_
 > **Orientação — 3 experimentos planejados. NÃO invente números; rode no Colab e preencha:**
 > - **Experimento 1 — Feature extraction (FE) vs Fine-tuning (FT):** mede o ganho de descongelar o topo.
 > - **Experimento 2 — Com vs Sem data augmentation:** mede o impacto da augmentation na generalização.
-> - **Experimento 3 — Avaliação OOD:** compara o desempenho no teste Kaggle contra as fotos do baralho real, medindo o **gap de domínio**.
+> - **Experimento 3 — Avaliação OOD:** compara o desempenho no teste Kaggle contra um **baralho de design diferente** (imagens limpas da web), medindo o **gap de design**. Registre que o gap de **captura** (fotos reais) não é medido aqui e fica como trabalho futuro.
 > - Para cada experimento, preencha a tabela abaixo e comente os resultados. A accuracy **esperada** do transfer learning em cartas é ~93–95% (referência da literatura, **não** é resultado seu — substitua pelos números reais).
 > - Inclua **matriz de confusão** e a análise de **"confusões perigosas"** (trocar naipe ou valor).
 
 ### 3.1 Tabela consolidada de resultados
 
-> Métricas: **Accuracy** e **F1 macro** no teste Kaggle (in-distribution) + **Accuracy OOD** nas fotos do baralho real. Todos os valores abaixo são **placeholders (preencher após o treino)**.
+> Métricas: **Accuracy** e **F1 macro** no teste Kaggle (in-distribution) + **Accuracy OOD** no baralho de design diferente (web). Todos os valores abaixo são **placeholders (preencher após o treino)**.
 
-| Configuração | Acc. (teste Kaggle) | F1 macro (teste Kaggle) | Acc. OOD (baralho real) | Observações |
+| Configuração | Acc. (teste Kaggle) | F1 macro (teste Kaggle) | Acc. OOD (design diferente) | Observações |
 |---|---|---|---|---|
 | Baseline: HOG + Reg. Logística | _(preencher)_ | _(preencher)_ | _(preencher)_ | _(preencher)_ |
 | EfficientNet-B0 — Feature Extraction (FE) | _(preencher)_ | _(preencher)_ | _(preencher)_ | _(preencher)_ |
@@ -108,10 +110,11 @@ _(preencher comentário sobre balanceamento e qualidade do dataset)_
 - Resultado: _(preencher)_
 - Interpretação: _(preencher — a augmentation ajudou na generalização e/ou no OOD?)_
 
-### 3.4 Experimento 3 — Avaliação OOD (gap de domínio)
+### 3.4 Experimento 3 — Avaliação OOD (gap de design)
 
-- Gap medido (Acc. Kaggle − Acc. OOD): _(preencher)_
-- Interpretação: _(preencher — quanto o desempenho cai fora da distribuição de treino e por quê)_
+- Gap de design medido (Acc. Kaggle − Acc. OOD design diferente): _(preencher)_
+- Interpretação: _(preencher — quanto o desempenho cai ao trocar o estilo do baralho; o modelo aprendeu o conceito da carta ou decorou o design do treino?)_
+- Ressalva (honestidade): este OOD usa **imagens limpas**, então o gap é um **limite inferior**; com **fotos reais** (gap de captura) a queda tende a ser maior. Medi-lo é trabalho futuro.
 
 ### 3.5 Matriz de confusão e confusões perigosas
 
@@ -204,9 +207,9 @@ _(preencher comentário sobre balanceamento e qualidade do dataset)_
 | Bloco | Tempo | Conteúdo |
 |---|---|---|
 | 1. Abertura e problema | 1–2 min | O que é: classificar 1 carta recortada em 53 classes. Por que importa: ferramenta **educacional** (probabilidade/regras/matemática); acessibilidade e benchmark como secundários. |
-| 2. Dados e método | 2–3 min | Dataset Kaggle (53 classes, 224×224, split 7.624/265/265); conjunto **OOD** (baralho real); EfficientNet-B0 (FE → FT) vs baseline HOG + Reg. Logística. |
+| 2. Dados e método | 2–3 min | Dataset Kaggle (53 classes, 224×224, split 7.624/265/265); conjunto **OOD** (baralho de **design diferente**, imagens limpas da web); EfficientNet-B0 (FE → FT) vs baseline HOG + Reg. Logística. |
 | 3. Experimentos | 3–4 min | Os 3 experimentos: FE vs FT; com vs sem augmentation; **gap OOD**. Mostrar a tabela consolidada (números reais) e a **matriz de confusão**. |
-| 4. Confusões perigosas e limitações | 1–2 min | Erros de naipe/valor; limitação de 1 baralho; queda no OOD. |
+| 4. Confusões perigosas e limitações | 1–2 min | Erros de naipe/valor; limitação de 1 baralho; queda no OOD de design. Ser honesto: o OOD é de design (web), não fotos reais → gap de captura é limite inferior/trabalho futuro. |
 | 5. Ética e impacto | 2 min | Dual-use/RTA (uso **proibido**), jogo problemático, viés do dataset, privacidade/LGPD (on-device). Impacto educacional positivo. |
 | 6. Conclusão e futuro | 1–2 min | O que foi atingido; **detecção com YOLO** como próximo passo. |
 | 7. Perguntas | restante | Q&A. |

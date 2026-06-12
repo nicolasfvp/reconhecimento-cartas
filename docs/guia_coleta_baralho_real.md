@@ -1,5 +1,12 @@
 # Guia Prático: Fotografando um Baralho Real para o Conjunto de Teste OOD
 
+> **Status nesta entrega:** o conjunto OOD usado atualmente é o de **"design diferente"**
+> (imagens limpas da web — ver [`guia_ood_design_web.md`](guia_ood_design_web.md)), que mede o
+> **gap de design**. Este guia descreve o caminho **padrão-ouro** — fotografar um baralho físico —
+> que mede o **gap de condições de captura** (luz, sombra, fundo, ângulo) e está marcado como
+> **trabalho futuro**. Se/quando você fotografar o baralho, ponha as imagens em
+> `data/raw/ood_baralho_real/` e aponte `OOD_DIR` no notebook para essa pasta.
+
 Este documento explica, passo a passo, como você deve fotografar **1 baralho físico próprio** e organizar as imagens para formar o conjunto de avaliação **OOD** (*out-of-distribution* — fora da distribuição de treino) do projeto de classificação de cartas.
 
 ---

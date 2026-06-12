@@ -104,7 +104,9 @@ Educadores, estudantes, pesquisadores de VC, desenvolvedores de ferramentas de a
 | Conjunto de avaliação | Origem | Accuracy | F1 macro | *Gap* de domínio |
 |---|---|---|---|---|
 | **Teste Kaggle (in-distribution)** | Mesmo domínio do treino | (preencher após o treino) | (preencher após o treino) | — |
-| **Fotos de baralho real (OOD)** | 1 baralho fotografado pelo usuário | (preencher após o treino) | (preencher após o treino) | (preencher após o treino) |
+| **Baralho de design diferente (OOD)** | Imagens limpas de licença livre (web); ver `src/ood_design.py` | (preencher após o treino) | (preencher após o treino) | (preencher após o treino) |
+
+> **O que esta linha OOD mede:** o **gap de design** (generalização para outro estilo de carta), **não** o gap de condições de captura (luz/sombra/fundo/ângulo de fotos reais). Como as imagens são renders limpos, o gap aqui é um **limite inferior** do esperado com fotos do mundo real — medir isso com um baralho fotografado é trabalho futuro (`docs/guia_coleta_baralho_real.md`).
 
 ### 5.3 Análise qualitativa
 - **Matriz de confusão:** (preencher após o treino) — inserir figura em `reports/`.
@@ -115,7 +117,8 @@ Educadores, estudantes, pesquisadores de VC, desenvolvedores de ferramentas de a
 ## 6. Limitações e Vieses
 
 - **Treinado em um único tipo de baralho:** o dataset reflete **um design** de cartas. O desempenho tende a **degradar** em baralhos com estilos artísticos diferentes, cartas regionais, decks personalizados ou marcas distintas.
-- ***Gap* de domínio (OOD):** as imagens de treino são **recortadas e padronizadas (224×224)**. Em fotos do mundo real (iluminação variável, fundo, sombras, perspectiva, oclusão parcial, desfoque, reflexos), espera-se **queda de acurácia** — quantificada no Experimento 3.
+- ***Gap* de design (OOD medido):** treinado em **um** design de cartas, o modelo tende a errar em baralhos de **estilo diferente**. O Experimento 3 quantifica isso com um baralho de design distinto (imagens limpas da web).
+- ***Gap* de captura (NÃO medido aqui):** em fotos do mundo real (iluminação variável, fundo, sombras, perspectiva, oclusão parcial, desfoque, reflexos), espera-se queda **adicional** de acurácia. O OOD atual usa renders limpos, então **não** captura esse efeito; medi-lo exige fotos reais (trabalho futuro). Por isso o gap reportado é um **limite inferior**.
 - **Conjuntos de validação e teste pequenos:** apenas **5 imagens por classe** (265 no total cada). Isso torna as estimativas de métrica **ruidosas** e sensíveis a poucos exemplos; intervalos de confiança são largos.
 - **Escopo restrito a classificação:** não detecta nem segmenta múltiplas cartas; **exige recorte prévio** de uma única carta.
 - **Viés de pré-treino (ImageNet):** o backbone carrega vieses do ImageNet, que não foi pensado para cartas.
@@ -150,7 +153,7 @@ Educadores, estudantes, pesquisadores de VC, desenvolvedores de ferramentas de a
 5. **Treino principal:** executar `src/train.py` (ou o notebook `notebooks/treino_cartas_colab.ipynb`) — Fase 1 (*feature extraction*) e Fase 2 (*fine-tuning*).
 6. **Avaliar:** `src/evaluate.py` gera accuracy, F1 macro, matriz de confusão e relatório de confusões perigosas em `reports/`.
 7. **Inferência:** `src/predict.py` classifica uma carta recortada.
-8. **OOD:** avaliar as **fotos do baralho real** do usuário e comparar com o teste Kaggle (Experimento 3).
+8. **OOD:** montar o **baralho de design diferente** (`python -m src.ood_design`) e comparar com o teste Kaggle (Experimento 3). Fotos reais de um baralho físico (gap de captura) ficam como trabalho futuro.
 
 ### 8.3 Estrutura do repositório
 ```

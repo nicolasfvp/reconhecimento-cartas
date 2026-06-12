@@ -35,11 +35,26 @@ kaggle datasets download -d gpiosenka/cards-image-datasetclassification -p data/
 Após baixar, aponte `data_dir` para a pasta que contém `train/`, `valid/` e `test/`
 (por padrão o projeto usa `data/raw/cards`).
 
-## Conjunto de teste OOD — seu baralho real (coleta manual)
+## Conjunto de teste OOD — baralho de "design diferente" (web)
 
-Para o experimento de generalização (out-of-distribution), você vai fotografar
-**um baralho real**. Siga o guia: [`../docs/guia_coleta_baralho_real.md`](../docs/guia_coleta_baralho_real.md).
+Para o experimento de generalização (out-of-distribution) desta entrega, usamos um
+**baralho de design diferente** do de treino, montado a partir de **imagens limpas de
+licença livre**. Ele é gerado de forma reprodutível (não versionamos as imagens):
 
-Coloque as fotos em `data/raw/ood_baralho_real/`, com **uma subpasta por classe**
-usando **exatamente os mesmos nomes** das subpastas do dataset do Kaggle
-(ex.: `ace of spades/`, `king of hearts/`, `joker/`).
+```bash
+python -m src.ood_design --out data/raw/ood_design_web
+```
+
+Isso cria `data/raw/ood_design_web/` com **uma subpasta por classe** usando **exatamente
+os mesmos nomes** das subpastas do Kaggle (ex.: `ace of spades/`, `king of hearts/`, `joker/`),
+prontas para `src.evaluate.evaluate_ood`.
+
+- **O que mede:** o **gap de design** (estilo de carta diferente do treino) — não o gap de
+  condições de captura (luz/sombra/fundo de fotos reais). Detalhes: [`../docs/guia_ood_design_web.md`](../docs/guia_ood_design_web.md).
+- **Fonte/licença:** baralho derivado de *Vector Playing Cards* (domínio público), via
+  *playing-cards-assets* (Howard Yeh, MIT). **Não** são fotos dos autores.
+
+> **Trabalho futuro — OOD com fotos reais (gap de captura):** fotografar um baralho físico
+> próprio é o padrão-ouro e mede um gap que as imagens da web não cobrem. Guia:
+> [`../docs/guia_coleta_baralho_real.md`](../docs/guia_coleta_baralho_real.md). Nesse caso, use
+> a pasta `data/raw/ood_baralho_real/` e ajuste `OOD_DIR` no notebook.

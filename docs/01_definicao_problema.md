@@ -60,7 +60,7 @@ O mesmo tipo de tecnologia tem **potencial de uso indevido** (*dual-use*), notad
 | **RF05** | Oferecer **modo de treino reprodutível** (fase 1: backbone congelado / *feature extraction*; fase 2: *fine-tuning* do topo com LR baixo). | `train.py` reproduz os resultados com `set_seed(42)`; notebook Colab documentado. |
 | **RF06** | Treinar e avaliar o **baseline HOG + Regressão Logística** para comparação. | `baseline.py` gera métricas comparáveis às do modelo principal. |
 | **RF07** | Avaliar o modelo gerando **métricas e artefatos** (accuracy, F1 macro, matriz de confusão). | `evaluate.py` produz relatórios e figuras em `reports/`. |
-| **RF08** | Suportar **avaliação OOD** sobre fotos de um baralho real. | O pipeline aceita um diretório externo de imagens rotuladas e reporta as métricas separadamente do teste Kaggle. |
+| **RF08** | Suportar **avaliação OOD** sobre um conjunto externo rotulado (na entrega: baralho de **design diferente**, imagens da web; fotos reais como trabalho futuro). | O pipeline aceita um diretório externo de imagens rotuladas e reporta as métricas separadamente do teste Kaggle. |
 | **RF09** | Permitir **carregar um modelo treinado salvo** para inferência. | Pesos persistidos em `models/` são carregados sem necessidade de re-treino. |
 
 ---
@@ -101,7 +101,7 @@ A avaliação combina métricas quantitativas e análise qualitativa de erros. *
 - **F1 macro** (média não ponderada por classe), importante por haver poucas amostras por classe na validação/teste.
 - **Matriz de confusão** completa (53 × 53) para inspeção visual de erros.
 - **Análise de "confusões perigosas":** identificação de erros que trocam **naipe** ou **valor** (ex.: confundir 6 com 9, ou Copas com Ouros), por serem os mais críticos em aplicações de leitura/educação.
-- **Accuracy OOD:** desempenho nas **fotos de um baralho real** do usuário, medindo o **gap de domínio** em relação ao teste Kaggle.
+- **Accuracy OOD:** desempenho num **baralho de design diferente** (imagens limpas da web), medindo o **gap de design** em relação ao teste Kaggle. O gap de **condições de captura** (fotos reais) é trabalho futuro.
 
 ### 5.2 Metas concretas
 
@@ -111,12 +111,12 @@ A avaliação combina métricas quantitativas e análise qualitativa de erros. *
 | F1 macro no teste Kaggle | **> 0,90** | Garante bom desempenho em todas as 53 classes, não só nas frequentes |
 | Comparação com baseline | Modelo principal **supera** o HOG + Regressão Logística em accuracy e F1 macro | Evidencia o valor do transfer learning |
 | Confusões perigosas | **Minimizar** trocas de naipe/valor; documentar e analisar as remanescentes | Erros críticos para leitura assistiva e ensino |
-| Accuracy OOD | **Reportar o gap** entre teste Kaggle e fotos reais | A meta é mensurar e discutir a queda de domínio, não necessariamente atingir o mesmo patamar |
+| Accuracy OOD | **Reportar o gap** entre teste Kaggle e o baralho de design diferente | A meta é mensurar e discutir a queda ao trocar o design, não necessariamente atingir o mesmo patamar (gap de captura fica como trabalho futuro) |
 
 ### 5.3 Experimentos que sustentam as métricas
 1. **Feature extraction (backbone congelado) vs. fine-tuning do topo** — impacto da estratégia de transfer learning.
 2. **Com vs. sem data augmentation** — impacto da aumentação de dados na generalização.
-3. **Avaliação OOD** — teste Kaggle vs. fotos do baralho real, quantificando o *domain gap*.
+3. **Avaliação OOD** — teste Kaggle vs. baralho de **design diferente** (web), quantificando o *gap de design* (fotos reais / gap de captura: trabalho futuro).
 
 ---
 

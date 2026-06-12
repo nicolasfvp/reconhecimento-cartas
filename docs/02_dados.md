@@ -13,13 +13,15 @@ O dataset principal do projeto é o **"Cards Image Dataset-Classification"**, de
 
 Este dataset cumpre o escopo definido para o projeto: **classificação** (1 carta recortada → 1 rótulo). A detecção de múltiplas cartas em cena não faz parte do escopo e está prevista como trabalho futuro.
 
-### 1.2 Conjunto out-of-distribution (OOD) próprio
+### 1.2 Conjunto out-of-distribution (OOD)
 
-Para avaliar a **capacidade de generalização** do modelo além das condições do dataset de origem, será construído um **conjunto OOD próprio**, composto por **fotografias de um baralho real** tiradas pelo próprio autor do projeto.
+Para avaliar a **capacidade de generalização** do modelo além do design de baralho visto no treino, é construído um **conjunto OOD de "design diferente"**, composto por **imagens limpas de um baralho de estilo distinto**, de licença livre, baixadas da web (script reprodutível `src/ood_design.py`).
 
-- **Objetivo:** medir o **gap de domínio** entre as imagens "limpas" do Kaggle (fundo uniforme, enquadramento padronizado) e fotos reais (iluminação variável, fundos diversos, ângulos, sombras, possíveis reflexos).
-- **Uso:** este conjunto **não** participa de treino nem de validação. É reservado exclusivamente para o **Experimento 3** (avaliação OOD: teste Kaggle vs. fotos do baralho real).
-- **Cuidados éticos e de privacidade (LGPD):** as fotos devem capturar **apenas as cartas**, aplicando **minimização de dados** — evitar enquadrar rostos, ambientes identificáveis ou terceiros. Quando houver captura incidental de ambiente, o material deve ser recortado/descartado. O processamento on-device é preferível para reduzir exposição de dados.
+- **O que este conjunto mede (e o que NÃO mede):** ele mede o **gap de design** — se o modelo aprendeu o *conceito* de cada carta (ex.: "rei de espadas") ou apenas decorou o estilo visual específico do dataset gpiosenka. Ele **não** mede o **gap de condições de captura** (iluminação variável, sombras, fundos reais, ângulos, reflexos, oclusão), porque são renders digitais limpos, e não fotos do mundo real. Esse segundo gap exige fotografar um baralho físico e fica registrado como **trabalho futuro** (ver `docs/guia_coleta_baralho_real.md`).
+- **Transparência:** estas imagens **não** são fotos tiradas pelos autores; são assets públicos. Por serem "limpas", em alguns aspectos são até mais parecidas com o domínio de treino do que fotos reais seriam — portanto o *gap* medido é um **limite inferior** do gap esperado em uso real. Isso é declarado explicitamente no relatório para evitar *overclaiming*.
+- **Procedência/licença:** baralho derivado do projeto *Vector Playing Cards* (domínio público), via repositório *playing-cards-assets* (Howard Yeh, licença MIT). Uso estritamente acadêmico/diagnóstico.
+- **Uso:** este conjunto **não** participa de treino nem de validação. É reservado exclusivamente para o **Experimento 3** (avaliação OOD: teste Kaggle vs. baralho de design diferente).
+- **Trabalho futuro — OOD com fotos reais:** o caminho padrão-ouro continua sendo fotografar um baralho físico próprio sob condições reais, com os cuidados de **minimização de dados / LGPD** (capturar **apenas as cartas**, sem rostos, terceiros ou ambientes identificáveis; processamento on-device). Guia completo em `docs/guia_coleta_baralho_real.md`.
 
 ## 2. Descrição das variáveis e dos rótulos
 
@@ -122,7 +124,7 @@ Com apenas **5 imagens por classe** em validação e em teste (265 no total), as
 
 ### 4.4 Conjunto OOD separado
 
-O **conjunto OOD** (fotos do baralho real) é mantido **totalmente separado** dos três splits acima. Ele **não** influencia treino nem validação e serve unicamente para medir **generalização out-of-distribution** no Experimento 3, quantificando o **gap de domínio** entre o teste Kaggle e fotos reais.
+O **conjunto OOD** (baralho de design diferente, imagens limpas da web) é mantido **totalmente separado** dos três splits acima. Ele **não** influencia treino nem validação e serve unicamente para medir **generalização out-of-distribution** no Experimento 3, quantificando o **gap de design** entre o teste Kaggle e um baralho de estilo distinto. O gap de **condições de captura** (fotos reais) não é coberto por este conjunto e fica como trabalho futuro.
 
 ## 5. Vieses e limitações da base
 
