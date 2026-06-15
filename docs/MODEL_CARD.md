@@ -1,6 +1,6 @@
 # Model Card — Classificador de Cartas de Baralho (EfficientNet-B0)
 
-> Documento no estilo Hugging Face / Google Model Cards. Projeto acadêmico (ICD/ADS). As métricas reais devem ser preenchidas **após o treino no Google Colab** — todos os números abaixo marcados como "(preencher após o treino)" são *placeholders*.
+> Documento no estilo Hugging Face / Google Model Cards. Projeto acadêmico (ICD/ADS). **Métricas medidas no Google Colab (GPU T4), `set_seed(42)`** e preenchidas abaixo. Modelo principal: EfficientNet-B0 (feature extraction + fine-tuning, **com** data augmentation).
 
 ---
 
@@ -9,7 +9,7 @@
 | Campo | Descrição |
 |---|---|
 | **Nome do modelo** | Classificador de Cartas de Baralho (Card Image Classifier) |
-| **Versão** | 0.1.0 (pré-treino / esqueleto reprodutível) |
+| **Versão** | 1.0.0 (treinado e avaliado) |
 | **Tipo de tarefa** | Classificação de imagem — *single-label*, multiclasse |
 | **Arquitetura** | Transfer learning com **EfficientNet-B0** (backbone pré-treinado em ImageNet) + cabeça de classificação linear adaptada para **53 classes** |
 | **Framework** | PyTorch + torchvision |
@@ -23,7 +23,7 @@
 | **Licença do código** | **MIT** (ver arquivo `LICENSE` do repositório) |
 | **Licença dos dados** | Marcada como **"Other"** no Kaggle — **a confirmar antes de qualquer redistribuição** (ver Seção 4) |
 | **Idioma da documentação** | Português do Brasil |
-| **Data do documento** | 2026-06-01 |
+| **Data do documento** | 2026-06-12 (atualizado com métricas reais) |
 
 ---
 
@@ -87,30 +87,32 @@ Educadores, estudantes, pesquisadores de VC, desenvolvedores de ferramentas de a
 
 **Métricas adotadas:** *Accuracy* + **F1 macro** + **matriz de confusão** + **análise de "confusões perigosas"** (trocas de naipe ou de valor entre classes próximas).
 
-> **Atenção:** todos os valores abaixo são *placeholders*. **(preencher após o treino)**. A *accuracy* esperada para transfer learning em cartas é de aproximadamente **93–95%**, mas esse número é uma expectativa de referência, **não** um resultado medido.
+> Valores **medidos** no Colab (GPU T4), `set_seed(42)`. Conjuntos de validação/teste pequenos (5 img/classe) → métricas com ruído estatístico; priorize **F1-macro** e a **matriz de confusão**. O modelo principal é o EfficientNet-B0 FE+FT **com** augmentation.
 
 ### 5.1 Resultados por experimento
 
 | Experimento | Configuração | Accuracy | F1 macro | Observações |
 |---|---|---|---|---|
-| **Baseline** | HOG + Regressão Logística | (preencher após o treino) | (preencher após o treino) | Referência clássica |
-| **Exp. 1a** | EfficientNet-B0, *feature extraction* (backbone congelado) | (preencher após o treino) | (preencher após o treino) | — |
-| **Exp. 1b** | EfficientNet-B0, *fine-tuning* do topo | (preencher após o treino) | (preencher após o treino) | Comparar com 1a |
-| **Exp. 2a** | Melhor modelo, **sem** *data augmentation* | (preencher após o treino) | (preencher após o treino) | — |
-| **Exp. 2b** | Melhor modelo, **com** *data augmentation* | (preencher após o treino) | (preencher após o treino) | Comparar com 2a |
+| **Baseline** | HOG + Regressão Logística | 0,706 | 0,698 | Referência clássica (superada com folga) |
+| **Exp. 1a** | EfficientNet-B0, *feature extraction* (backbone congelado) | 0,385 | 0,363 | Features ImageNet são fracas p/ cartas |
+| **Exp. 1b** | EfficientNet-B0, *fine-tuning* do topo | 0,947 | 0,947 | +56 pp sobre 1a → fine-tuning é essencial |
+| **Exp. 2a** | Melhor modelo, **sem** *data augmentation* | 0,974 | 0,973 | Maior no teste limpo (in-distribution) |
+| **Exp. 2b** | Melhor modelo, **com** *data augmentation* ← principal | 0,947 | 0,947 | −2,6 pp in-dist; trocado por robustez (ver OOD) |
 
 ### 5.2 Avaliação OOD (Experimento 3)
 
 | Conjunto de avaliação | Origem | Accuracy | F1 macro | *Gap* de domínio |
 |---|---|---|---|---|
-| **Teste Kaggle (in-distribution)** | Mesmo domínio do treino | (preencher após o treino) | (preencher após o treino) | — |
-| **Baralho de design diferente (OOD)** | Imagens limpas de licença livre (web); ver `src/ood_design.py` | (preencher após o treino) | (preencher após o treino) | (preencher após o treino) |
+| **Teste Kaggle (in-distribution)** | Mesmo domínio do treino | 0,947 | 0,947 | — |
+| **Baralho de design diferente (OOD)** | Imagens limpas de licença livre (web); ver `src/ood_design.py` | 0,593 | 0,574 | **gap de design ≈ 35 pp** |
+
+> Valores do **modelo principal** (com augmentation). O OOD do modelo **sem** augmentation é medido na célula 8b do notebook (comparação de robustez do Experimento 2) — *(a preencher quando rodar a 8b)*.
 
 > **O que esta linha OOD mede:** o **gap de design** (generalização para outro estilo de carta), **não** o gap de condições de captura (luz/sombra/fundo/ângulo de fotos reais). Como as imagens são renders limpos, o gap aqui é um **limite inferior** do esperado com fotos do mundo real — medir isso com um baralho fotografado é trabalho futuro (`docs/guia_coleta_baralho_real.md`).
 
 ### 5.3 Análise qualitativa
-- **Matriz de confusão:** (preencher após o treino) — inserir figura em `reports/`.
-- **Confusões perigosas:** (preencher após o treino) — listar os pares de classes mais confundidos e destacar trocas de **naipe** (ex.: copas ↔ ouros) e de **valor** (ex.: 6 ↔ 9), que são as mais críticas em uso educacional/acessibilidade.
+- **Matriz de confusão:** ver `reports/confusion_matrix_test.png` (teste Kaggle) e `reports/confusion_matrix_ood.png` (OOD de design), geradas pelo notebook (seções 6 e 8). Relatório por classe em `reports/classification_report_test.csv`.
+- **Confusões perigosas:** dos **14 erros** no teste (251/265 corretos), **quase todos são trocas de _valor_ dentro do mesmo naipe** — ex.: `nine of diamonds`→`eight of diamonds`, `seven of clubs`→`eight of clubs`, `five of diamonds`→`three of diamonds`, `nine of spades`→`six of spades` — e **nenhuma troca de naipe/cor** entre as confusões listadas. Ou seja: o modelo **lê bem o naipe** e erra na **contagem de pips** de cartas numéricas próximas. A classe **`joker` é a mais frágil** (2 de 5 imagens erradas, previstas como `ten`/`five of clubs`), provavelmente por design atípico e poucas amostras. O fato de **erros de naipe (copas↔ouros) — os mais críticos no uso educacional/assistivo — praticamente não ocorrerem** é um ponto positivo de segurança.
 
 ---
 
@@ -184,4 +186,4 @@ LICENSE     MIT (código)
 
 ---
 
-*Model card sujeito a atualização após o treino. Métricas reais substituirão os placeholders "(preencher após o treino)". Em caso de dúvida sobre usos permitidos, prevalece a Seção 3 (Usos Fora de Escopo e Proibidos).*
+*Métricas medidas no Colab (GPU T4), `set_seed(42)`, em 2026-06. Em caso de dúvida sobre usos permitidos, prevalece a Seção 3 (Usos Fora de Escopo e Proibidos).*

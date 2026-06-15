@@ -78,7 +78,7 @@ Para cada risco da Seção 1, apresenta-se a **defesa** correspondente. As mitig
 - **Avaliação honesta de generalização (OOD).** O **Experimento 3** compara o teste *in-distribution* (Kaggle) com um **baralho de design diferente** (imagens limpas de licença livre, da web), quantificando o **gap de design**. Em nome da própria honestidade que esta seção defende, declara-se que estas **não** são fotos de um baralho real: o conjunto mede o gap de *design*, não o de *condições de captura* (luz, sombra, fundo, ângulo), e por usar imagens limpas o gap reportado é um **limite inferior**. Medir o gap de captura com fotos reais é **trabalho futuro**. Reportar isso é a defesa contra a "falsa sensação de robustez".
 - **Métricas por subgrupo/condição e análise de confusões perigosas.** Além de *accuracy* e **F1 macro**, reporta-se a **matriz de confusão** e uma análise das **confusões perigosas** (trocas de naipe/valor), com desempenho recortado por condição (iluminação, ângulo, design), evitando que uma média alta mascare falhas concentradas.
 
-> **Nota sobre números:** todos os resultados quantitativos (acurácia esperada de ~93–95% em transfer learning, F1 macro, gap OOD) são **placeholders a preencher após o treino no Colab**. Nenhuma métrica real é afirmada neste documento.
+> **Nota sobre números:** os resultados quantitativos foram **medidos no Colab (GPU T4)**: **94,7%** de acurácia / **0,947** de F1-macro no teste Kaggle e **~59%** no OOD de design (gap de domínio ≈ 35 pp). Detalhes no README e no MODEL_CARD.
 
 ### 2.4. Defesa de privacidade e conformidade com a LGPD (responde a 1.4)
 
@@ -117,7 +117,7 @@ O sistema **não foi validado fora dos baralhos e condições do dataset**. Em p
 - O modelo foi treinado sobre um **conjunto predominantemente de um estilo de baralho**, em imagens **já recortadas** e padronizadas; **não há garantia** de desempenho sobre outros designs, baralhos regionais ou cartas estilizadas.
 - O desempenho pode degradar significativamente sob **iluminação adversa, oclusão, ângulo oblíquo, desgaste físico** das cartas e **baixa qualidade de câmera** — condições medidas, mas não eliminadas, pelo Experimento 3 (OOD).
 - O escopo é **classificação de uma carta isolada já recortada**; o sistema **não detecta** múltiplas cartas em cena nem segmenta cartas automaticamente.
-- As métricas de desempenho são **placeholders a preencher após o treino**; a acurácia esperada (~93–95%) é uma **expectativa baseada na literatura de transfer learning**, não um resultado medido deste projeto.
+- As métricas de desempenho foram **medidas**: **94,7%** no teste Kaggle e **~59%** no OOD de design (gap de domínio explícito, ≈ 35 pp), coerentes com a literatura de transfer learning (~93–95% in-distribution). O reporte do gap, e não só da acurácia limpa, é parte da postura de honestidade do projeto.
 - Como toda classificação probabilística, o sistema **comete erros**, incluindo **confusões perigosas** (troca de naipe ou valor). Em contextos sensíveis (por exemplo, acessibilidade), recomenda-se **confirmação humana** e não dependência exclusiva da saída automática.
 
 ### 3.3. Usos legítimos previstos

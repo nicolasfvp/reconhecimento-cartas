@@ -6,7 +6,8 @@ usando *transfer learning* em PyTorch.
 
 > **Status:** estrutura, código e documentação prontos. O treino é executado no
 > **Google Colab** (ver [`notebooks/treino_cartas_colab.ipynb`](notebooks/treino_cartas_colab.ipynb)).
-> As métricas reais serão preenchidas após o primeiro treino.
+> **Métricas medidas** (Colab, GPU T4, `set_seed(42)`) preenchidas abaixo —
+> modelo principal: **94,7%** de acurácia no teste Kaggle.
 
 ---
 
@@ -115,15 +116,21 @@ python -m src.predict caminho/para/carta.jpg --checkpoint models/efficientnet_b0
 
 ---
 
-## 📈 Resultados *(preencher após o treino)*
+## 📈 Resultados
 
 | Modelo | Acurácia (teste) | F1 macro | Acurácia OOD |
 |--------|------------------|----------|--------------|
-| Baseline (HOG + LogReg) | _(preencher)_ | _(preencher)_ | — |
-| EfficientNet-B0 (feature extraction) | _(preencher)_ | _(preencher)_ | _(preencher)_ |
-| EfficientNet-B0 (fine-tuning) | _(preencher)_ | _(preencher)_ | _(preencher)_ |
+| Baseline (HOG + LogReg) | 70,6% | 0,698 | — |
+| EfficientNet-B0 (feature extraction) | 38,5% | 0,363 | — |
+| **EfficientNet-B0 (fine-tuning)** ← modelo principal | **94,7%** | **0,947** | **59,3%** |
 
-Acurácia esperada do *transfer learning* em cartas: **~93–95%** (referência da literatura).
+O **modelo principal** é o EfficientNet-B0 com *fine-tuning* **e** *data augmentation*
+(**94,7%** de acurácia / **0,947** de F1-macro no teste Kaggle), em linha com a referência da
+literatura (~93–95%) e bem acima do baseline (70,6%). No Experimento 2, a versão **sem**
+augmentation chegou a **97,4%** no teste limpo, mas adotamos a **com** augmentation como
+principal pela robustez (a augmentation troca ~2,6 pp de acurácia in-distribution por
+generalização). Conjuntos de val/teste pequenos (5 img/classe) → ler as métricas com
+incerteza ampla; por isso priorizamos **F1-macro** e a matriz de confusão.
 
 > A coluna **Acurácia OOD** refere-se ao baralho de **design diferente** (imagens limpas da web),
 > medindo o *gap de design* — não a um baralho fotografado em condições reais (gap de captura,

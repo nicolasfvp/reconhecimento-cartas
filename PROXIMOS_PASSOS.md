@@ -31,9 +31,12 @@ Checklist das etapas que precisam de ação humana para concluir o projeto.
   `data/raw/ood_baralho_real/`, ajustar `OOD_DIR` no notebook e medir o gap de **condições de captura**
   (que o OOD de design não cobre).
 
-- [ ] **6. Preencher as métricas reais**
-  Substituir os campos *"(preencher após o treino)"* em `README.md`, `docs/MODEL_CARD.md` e
-  `reports/relatorio_final_outline.md` com os números obtidos no Colab. Depois: novo commit/push.
+- [x] **6. Preencher as métricas reais**
+  Números do treino (Colab T4) preenchidos em `README.md`, `docs/MODEL_CARD.md`, `docs/02_dados.md`,
+  `docs/01_definicao_problema.md`, `docs/03_etica_impacto.md` e na tabela do `relatorio_final_outline.md`:
+  teste **94,7%** / F1-macro **0,947**, baseline 70,6%, OOD de design **59,3%** (gap ≈ 35 pp).
+  **Falta (precisa de 1 run):** (a) o OOD do modelo **sem** aug (célula 8b); (b) commitar as figuras de
+  `reports/` (matrizes de confusão + `experimentos.csv` + `classification_report_test.csv`).
 
 - [ ] **7. Confirmar a licença exata do dataset gpiosenka**
   No Kaggle a licença está marcada como *"Other"* — confirmar antes de redistribuir imagens.
@@ -44,4 +47,4 @@ Checklist das etapas que precisam de ação humana para concluir o projeto.
 
 ---
 
-> Última atualização: 2026-06-01 — passos 1 a 4 concluídos.
+> Última atualização: 2026-06-12 — passos 1–6 concluídos (métricas reais preenchidas); resta gerar/commitar as figuras (4) e, opcional, fotos reais (5b).

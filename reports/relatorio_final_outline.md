@@ -50,7 +50,7 @@
 | Imagens por classe (val/test) | 5 / 5 |
 | Licença | "Other" (Kaggle) — _(confirmar antes de redistribuir)_ |
 
-_(preencher comentário sobre balanceamento e qualidade do dataset)_
+O dataset é aproximadamente balanceado (~144 imagens/classe em média, 7.624/53). No teste, o F1-macro (0,947) ficou igual à accuracy (0,947), confirmando desempenho homogêneo entre as 53 classes — não foi necessário usar *class weights*.
 
 ### 2.2 Conjunto OOD (baralho de design diferente — web)
 
@@ -71,10 +71,10 @@ _(preencher comentário sobre balanceamento e qualidade do dataset)_
 ### 2.4 Modelos e treino
 
 - **Modelo principal:** EfficientNet-B0 (torchvision), transfer learning em duas fases.
-  - Fase 1 — *feature extraction*: backbone congelado, treina só a cabeça classificadora. _(preencher épocas/LR)_
-  - Fase 2 — *fine-tuning*: descongela o topo, LR baixo. _(preencher épocas/LR)_
-- **Baseline:** HOG + Regressão Logística (scikit-learn). _(preencher parâmetros do HOG e do classificador)_
-- **Infra e reprodutibilidade:** Google Colab (GPU T4 gratuita), `set_seed(42)`, `requirements.txt` com versões pinadas. _(preencher batch size, otimizador, nº de épocas finais)_
+  - Fase 1 — *feature extraction*: backbone congelado, treina só a cabeça classificadora. **8 épocas, AdamW, LR 1e-3.**
+  - Fase 2 — *fine-tuning*: descongela o backbone. **AdamW com LR de pico 3e-4 + cosine annealing, até 20 épocas, early stopping (paciência 6) — parou na época 12.**
+- **Baseline:** HOG (orientações=9, células 16×16 px, blocos 2×2, `L2-Hys`, imagem 128×128 em escala de cinza) + Regressão Logística (`max_iter=2000`, `C=1.0`); até 80 imagens/classe.
+- **Infra e reprodutibilidade:** Google Colab (GPU T4 gratuita), `set_seed(42)`, `requirements.txt` com versões pinadas. **batch size 32, AdamW, imagem 224×224, normalização ImageNet; 8 épocas de FE + 12 de fine-tuning (de até 20, com early stopping).**
 
 ---
 
@@ -89,30 +89,30 @@ _(preencher comentário sobre balanceamento e qualidade do dataset)_
 
 ### 3.1 Tabela consolidada de resultados
 
-> Métricas: **Accuracy** e **F1 macro** no teste Kaggle (in-distribution) + **Accuracy OOD** no baralho de design diferente (web). Todos os valores abaixo são **placeholders (preencher após o treino)**.
+> Métricas: **Accuracy** e **F1 macro** no teste Kaggle (in-distribution) + **Accuracy OOD** no baralho de design diferente (web). Valores **medidos** no Colab (GPU T4, `set_seed(42)`).
 
 | Configuração | Acc. (teste Kaggle) | F1 macro (teste Kaggle) | Acc. OOD (design diferente) | Observações |
 |---|---|---|---|---|
-| Baseline: HOG + Reg. Logística | _(preencher)_ | _(preencher)_ | _(preencher)_ | _(preencher)_ |
-| EfficientNet-B0 — Feature Extraction (FE) | _(preencher)_ | _(preencher)_ | _(preencher)_ | _(preencher)_ |
-| EfficientNet-B0 — Fine-Tuning (FT) | _(preencher)_ | _(preencher)_ | _(preencher)_ | _(preencher)_ |
-| EfficientNet-B0 — FT **sem** augmentation | _(preencher)_ | _(preencher)_ | _(preencher)_ | _(preencher)_ |
+| Baseline: HOG + Reg. Logística | 0,706 | 0,698 | — | Referência clássica |
+| EfficientNet-B0 — Feature Extraction (FE) | 0,385 | 0,363 | — | Backbone congelado |
+| EfficientNet-B0 — Fine-Tuning (FT, com aug) | 0,947 | 0,947 | 0,593 | **Modelo principal** |
+| EfficientNet-B0 — FT **sem** augmentation | 0,974 | 0,973 | *(a medir na célula 8b)* | Maior no teste limpo |
 
 > _Referência da literatura (não é resultado deste trabalho): transfer learning em cartas tende a ~93–95% de accuracy in-distribution._
 
 ### 3.2 Experimento 1 — Feature extraction vs Fine-tuning
 
-- Resultado: _(preencher)_
+- Resultado: **FE (congelado) 0,385** vs **FT 0,947** de acurácia no teste (**+56,2 pp**); F1-macro 0,363 → 0,947.
 - Interpretação: _(preencher — o fine-tuning valeu o custo? quanto ganhou?)_
 
 ### 3.3 Experimento 2 — Com vs sem data augmentation
 
-- Resultado: _(preencher)_
+- Resultado: **com aug 0,947** vs **sem aug 0,974** no teste limpo (sem aug **+2,6 pp** in-distribution). OOD (design) com aug = **0,593**; sem aug *(a medir na célula 8b)*.
 - Interpretação: _(preencher — a augmentation ajudou na generalização e/ou no OOD?)_
 
 ### 3.4 Experimento 3 — Avaliação OOD (gap de design)
 
-- Gap de design medido (Acc. Kaggle − Acc. OOD design diferente): _(preencher)_
+- Gap de design medido (Acc. Kaggle − Acc. OOD design diferente): **0,947 − 0,593 = 0,354 (≈ 35 pp)**.
 - Interpretação: _(preencher — quanto o desempenho cai ao trocar o estilo do baralho; o modelo aprendeu o conceito da carta ou decorou o design do treino?)_
 - Ressalva (honestidade): este OOD usa **imagens limpas**, então o gap é um **limite inferior**; com **fotos reais** (gap de captura) a queda tende a ser maior. Medi-lo é trabalho futuro.
 
@@ -120,9 +120,9 @@ _(preencher comentário sobre balanceamento e qualidade do dataset)_
 
 > **Orientação:** insira a figura da matriz de confusão (exportada por `src/evaluate.py`) e discuta os erros mais frequentes. Classifique as **confusões perigosas**: trocar **naipe** (♠♥♦♣) ou **valor** (ex.: 6 vs 9, valete vs dama), que em um uso educacional ou de acessibilidade transmitiriam informação errada.
 
-- Figura: _(inserir `reports/confusao_*.png`)_
-- Confusões mais frequentes: _(preencher)_
-- Confusões perigosas (naipe/valor): _(preencher)_
+- Figura: `reports/confusion_matrix_test.png` (teste) e `reports/confusion_matrix_ood.png` (OOD); relatório por classe em `reports/classification_report_test.csv`.
+- Confusões mais frequentes: 14 erros em 265 (251 corretos). Ex.: `nine of diamonds`→`eight of diamonds`, `seven of clubs`→`eight of clubs`, `five of diamonds`→`three of diamonds`, `nine of spades`→`six of spades`; classe `joker` com 2 de 5 imagens erradas.
+- Confusões perigosas (naipe/valor): predominam trocas de **valor dentro do mesmo naipe** (contagem de pips em cartas numéricas próximas); **não** houve troca de **naipe/cor** entre as listadas — positivo, pois erro de naipe (copas↔ouros) seria o mais crítico no uso educacional/assistivo. Ponto fraco isolado: `joker`.
 
 ---
 

@@ -94,7 +94,7 @@ O mesmo tipo de tecnologia tem **potencial de uso indevido** (*dual-use*), notad
 
 ## 5. Métricas de Sucesso
 
-A avaliação combina métricas quantitativas e análise qualitativa de erros. **Os valores numéricos finais são placeholders e serão preenchidos após o treino no Colab** — as metas abaixo definem os critérios de aceitação.
+A avaliação combina métricas quantitativas e análise qualitativa de erros. **Resultados medidos (Colab, GPU T4, `set_seed(42)`):** **94,7%** de acurácia e **0,947** de F1-macro no teste Kaggle, superando o baseline (70,6%) e atendendo às metas abaixo; no OOD de design a acurácia cai para **~59%** (gap ≈ 35 pp). As metas abaixo definiram os critérios de aceitação.
 
 ### 5.1 Métricas adotadas
 - **Accuracy** (acurácia global) no conjunto de teste Kaggle.

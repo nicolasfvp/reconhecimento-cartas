@@ -93,7 +93,7 @@ O **impacto da augmentation é objeto do Experimento 2** (com vs. sem data augme
 ### 3.5 Tratamento de classes
 
 - **Mapeamento de rótulos:** as 53 classes são mapeadas para índices inteiros de forma determinística (ordem alfabética das pastas via `ImageFolder`), e esse mapeamento é registrado para garantir consistência entre treino, avaliação e inferência (`src/predict.py`).
-- **Balanceamento:** o conjunto de treino é razoavelmente equilibrado entre as 53 classes (não há classe raríssima dominando o erro). Caso a inspeção da contagem por classe revele desbalanceamento relevante, prevê-se como mitigação o uso de **ponderação da função de perda** (*class weights*) ou amostragem balanceada — a decisão final será registrada **(preencher após inspeção do dataset)**.
+- **Balanceamento:** o conjunto de treino (~144 imagens/classe em média, 7.624/53) é aproximadamente equilibrado entre as 53 classes. **Decisão registrada:** **não** foi necessário usar *class weights* nem amostragem balanceada — no teste o **F1-macro (0,947) ficou igual à accuracy (0,947)**, indicando desempenho homogêneo entre as classes (nenhuma classe rara dominando o erro).
 - **Reprodutibilidade:** toda a montagem dos *dataloaders* (embaralhamento, ordem, divisão) é feita sob `set_seed(42)` (`src/seed.py`), com `requirements.txt` pinado, garantindo execução reprodutível no Google Colab (GPU T4).
 
 ## 4. Estratégia de divisão treino / validação / teste
@@ -118,7 +118,7 @@ O dataset gpiosenka já vem com **divisão oficial pronta**, que será adotada s
 
 Com apenas **5 imagens por classe** em validação e em teste (265 no total), as **métricas são estatisticamente ruidosas**: o erro/acerto de **uma única imagem por classe altera a accuracy daquela classe em 20 pontos percentuais**. Implicações assumidas no projeto:
 
-- a accuracy esperada (~93–95%, **números reais a preencher após o treino**) deve ser lida com **intervalo de incerteza amplo**;
+- a accuracy **medida** (**94,7%** no teste, modelo principal) deve ser lida com **intervalo de incerteza amplo** (5 img/classe → cada imagem vale ~20 pp na classe);
 - privilegia-se o **F1 macro** e a **matriz de confusão** sobre a accuracy isolada, e a análise enfatiza **padrões de confusão** (quais pares de classes se confundem) mais do que o valor pontual da métrica;
 - evita-se overclaiming: diferenças pequenas entre configurações (ex.: com vs. sem augmentation) podem **não ser significativas** dado o tamanho dos conjuntos.
 
@@ -136,6 +136,6 @@ O dataset de origem viabiliza o projeto, mas impõe limitações que **enviesam 
 - **Ausência de variação realista de iluminação e oclusão:** não há sombras fortes, reflexos, baixa luz, desfoque de movimento, nem cartas parcialmente cobertas. A *data augmentation* (color jitter, random erasing, affine) **mitiga parcialmente**, mas não substitui dados reais.
 - **Validação e teste muito pequenos (5 img/classe):** conforme a Seção 4.3, limita a confiabilidade estatística das métricas e a capacidade de detectar diferenças finas entre configurações.
 - **Generalização limitada por construção:** como o treino reflete uma distribuição estreita, **não se deve assumir** que a accuracy in-distribution se transfira para uso no mundo real. Esta limitação será **medida** (gap OOD) e **declarada** na documentação e no README, junto aos **usos não previstos/proibidos** (ex.: assistência em jogos de azar/apostas — risco de *dual-use* / RTA).
-- **Possível desbalanceamento residual / qualidade de rótulos:** ainda que o treino seja aproximadamente equilibrado, eventuais erros de rotulagem ou imagens atípicas só serão conhecidos após a inspeção **(preencher após verificação de integridade do dataset)**.
+- **Possível desbalanceamento residual / qualidade de rótulos:** o treino é aproximadamente equilibrado e a verificação de integridade do pipeline (conversão p/ RGB, descarte de arquivos ilegíveis) não revelou impedimentos — o modelo atingiu 94,7% no teste. Eventual ruído residual de rótulos não foi significativo o bastante para limitar esse resultado in-distribution.
 
 > **Síntese:** o dataset é adequado como **prova de conceito acadêmica** de classificação de cartas via transfer learning, mas suas limitações (baralho único, fundos uniformes, conjuntos de avaliação pequenos) **restringem a generalização**. Por isso o projeto inclui um conjunto **OOD próprio** e adota uma postura de **reporte honesto das métricas e dos riscos**, em vez de prometer desempenho garantido em qualquer baralho ou condição de captura.

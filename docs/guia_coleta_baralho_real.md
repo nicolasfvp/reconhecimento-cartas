@@ -155,4 +155,4 @@ Antes de considerar o conjunto OOD pronto:
 
 Concluído o checklist, o conjunto está pronto para ser usado em `src/evaluate.py` na avaliação OOD e na comparação do **gap de domínio** (teste Kaggle vs. baralho real) do Experimento 3.
 
-> Resultados numéricos (accuracy e F1-macro no Kaggle vs. OOD, e o tamanho do gap) serão **(preencher após o treino)**.
+> Os resultados do OOD **de design** (web) já constam no README/MODEL_CARD: teste 94,7% vs OOD 59,3% (gap ≈ 35 pp). Os números de um OOD com **fotos reais** (este guia) seriam preenchidos se/quando esse conjunto for coletado.
