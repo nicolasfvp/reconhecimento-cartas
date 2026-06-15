@@ -206,23 +206,24 @@ def _build_cfg_from_args(args) -> Config:
 def main():
     import argparse
 
-    from .config import SUPPORTED_BACKBONES
+    from .config import Config, SUPPORTED_BACKBONES
 
+    _d = Config()  # defaults da CLI seguem o Config (evita divergir e re-introduzir undertraining)
     p = argparse.ArgumentParser(description="Treino do classificador de cartas (transfer learning).")
-    p.add_argument("--data-dir", default="data/raw/cards")
-    p.add_argument("--backbone", choices=SUPPORTED_BACKBONES, default="efficientnet_b0")
-    p.add_argument("--epochs-head", type=int, default=8)
-    p.add_argument("--epochs-finetune", type=int, default=5)
+    p.add_argument("--data-dir", default=_d.data_dir)
+    p.add_argument("--backbone", choices=SUPPORTED_BACKBONES, default=_d.backbone)
+    p.add_argument("--epochs-head", type=int, default=_d.epochs_head)
+    p.add_argument("--epochs-finetune", type=int, default=_d.epochs_finetune)
     p.add_argument("--no-finetune", action="store_true", help="treina so a cabeca (experimento 1).")
     p.add_argument("--no-augment", action="store_true", help="desliga data augmentation (experimento 2).")
-    p.add_argument("--batch-size", type=int, default=32)
-    p.add_argument("--img-size", type=int, default=224)
-    p.add_argument("--lr-head", type=float, default=1e-3)
-    p.add_argument("--lr-finetune", type=float, default=1e-5)
-    p.add_argument("--seed", type=int, default=42)
-    p.add_argument("--out-dir", default="models")
-    p.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
-    p.add_argument("--num-workers", type=int, default=2)
+    p.add_argument("--batch-size", type=int, default=_d.batch_size)
+    p.add_argument("--img-size", type=int, default=_d.img_size)
+    p.add_argument("--lr-head", type=float, default=_d.lr_head)
+    p.add_argument("--lr-finetune", type=float, default=_d.lr_finetune)
+    p.add_argument("--seed", type=int, default=_d.seed)
+    p.add_argument("--out-dir", default=_d.out_dir)
+    p.add_argument("--device", default=_d.device, choices=["auto", "cpu", "cuda"])
+    p.add_argument("--num-workers", type=int, default=_d.num_workers)
     args = p.parse_args()
 
     cfg = _build_cfg_from_args(args)

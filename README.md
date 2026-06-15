@@ -165,6 +165,7 @@ incerteza ampla; por isso priorizamos **F1-macro** e a matriz de confusão.
 - [Dados e preparação](docs/02_dados.md) (item 2.2)
 - [Avaliação ética e impacto](docs/03_etica_impacto.md) (item 2.5)
 - [Model Card](docs/MODEL_CARD.md)
+- [**Relatório de desenvolvimento**](docs/RELATORIO_DESENVOLVIMENTO.md) — decisões, técnicas, resultados, jornada e banco de perguntas para a defesa
 - [Guia do conjunto OOD "design diferente" (web)](docs/guia_ood_design_web.md) — usado na entrega atual
 - [Guia de coleta do baralho real (gap de captura — trabalho futuro)](docs/guia_coleta_baralho_real.md)
 - [Esqueleto do relatório final](reports/relatorio_final_outline.md) (itens 2.6 e 2.7)

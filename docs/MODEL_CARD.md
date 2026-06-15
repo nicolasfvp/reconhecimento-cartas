@@ -79,7 +79,7 @@ Educadores, estudantes, pesquisadores de VC, desenvolvedores de ferramentas de a
 
 ### 4.1 Pré-processamento
 - Redimensionamento para 224×224 (quando aplicável) e normalização com média/desvio do ImageNet.
-- **Data augmentation** (experimento 2): transformações como *flip*, rotação leve, variação de brilho/contraste — aplicadas **somente no treino**.
+- **Data augmentation** (experimento 2): rotação leve, *color jitter* (brilho/contraste/saturação), *affine* leve (translação/escala) e *random erasing* — aplicadas **somente no treino**. *Flips* horizontais/verticais foram **evitados de propósito** (cartas têm orientação; espelhar geraria imagens irreais/ambíguas).
 
 ---
 
