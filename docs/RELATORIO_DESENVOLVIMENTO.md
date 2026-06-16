@@ -216,8 +216,8 @@ Os três experimentos são controlados (variando um fator por vez) e rodam no no
 - **Objetivo:** medir o efeito da augmentation na generalização.
 - **Método:** melhor configuração (FE+FT, 20 épocas), ligando/desligando a augmentation de treino.
 - **Resultado (in-distribution, teste limpo):** **sem aug 0,9736 / F1 0,9734** vs **com aug 0,9472 / F1 0,9472** — o **sem aug é ~2,6 pp MAIOR** no teste limpo.
-- **Resultado (OOD, robustez):** com aug = **OOD 0,5926 / F1 0,5741**; **sem aug OOD = (a medir)** (célula 8b, pendente).
-- **Interpretação honesta:** como o teste é **quase igual ao treino** (imagens limpas, mesmo design), a augmentation **regulariza demais** e custa um pouco de acurácia *in-distribution*. **NÃO** se deve afirmar que "a augmentation melhorou os resultados" no teste limpo — ela **não** melhorou. O ganho esperado da augmentation é em **robustez/OOD**, exatamente o que a comparação com-vs-sem-aug no OOD (célula 8b) mediria — e esse número ainda **não foi coletado**. Por isso o modelo principal adotado é o **com augmentation** (escolha por robustez), assumindo conscientemente o pequeno custo in-distribution.
+- **Resultado (OOD design):** com aug = **0,5926 / F1 0,5741**; sem aug = **0,5926 / F1 0,5678** — **mesma acurácia OOD** (32/54), F1 quase igual (diferença dentro do ruído).
+- **Interpretação honesta:** como o teste é **quase igual ao treino** (imagens limpas, mesmo design), a augmentation **regulariza demais** e custa ~2,6 pp *in-distribution*. **NÃO** se deve afirmar que "a augmentation melhorou os resultados": no teste limpo ela **piorou**, e no **OOD de design** ela **empatou** (mesma acurácia; F1 +0,6 pp, dentro do ruído). Isso é **esperado**: a augmentation usada (rotação, *color jitter*, *affine*, *erasing*) simula **variação de captura**, mas este OOD testa **variação de design** (arte/fontes) — gaps de tipos diferentes. O modelo principal adotado é o **com augmentation** como escolha de **deploy** (no uso real, com fotos, espera-se robustez a captura), declarando com transparência que esse benefício **não foi medido aqui** — exigiria um OOD de fotos reais (trabalho futuro).
 
 ### 7.3 Experimento 3 — Avaliação OOD (gap de design)
 
@@ -237,7 +237,7 @@ Os três experimentos são controlados (variando um fator por vez) e rodam no no
 | Baseline: HOG + Reg. Logística | 0,7057 | 0,6977 | — | — | Piso de comparação clássico |
 | EfficientNet-B0 — FE (congelado) | 0,3849 | 0,3630 | — | — | Features ImageNet fracas p/ cartas |
 | **EfficientNet-B0 — FE+FT com aug** ← **principal** | **0,9472** | **0,9472** | **0,5926** | **0,5741** | Modelo entregue; gap de design ≈ 35 pp |
-| EfficientNet-B0 — FE+FT sem aug | 0,9736 | 0,9734 | **(a medir)** | **(a medir)** | Maior no teste limpo; OOD pendente (célula 8b) |
+| EfficientNet-B0 — FE+FT sem aug | 0,9736 | 0,9734 | 0,5926 | 0,5678 | Maior no teste limpo; **mesma acc. OOD** (gap maior, ≈ 38 pp) |
 
 > Valores de validação relevantes: FE val 0,4528; FE+FT com aug val 0,9925; FE+FT sem aug val 0,9887. Referência da literatura (não é resultado deste trabalho): transfer learning em cartas tende a ~93–95% in-distribution — o modelo principal (94,7%) está alinhado.
 
@@ -281,7 +281,7 @@ Esta seção registra honestamente o **percurso** (não só o resultado final) �
 
 - **Reportar o gap OOD** (e declará-lo como **limite inferior**) em vez de só a acurácia limpa.
 - Montar um **OOD de design honestamente rotulado** (imagens limpas da web) em vez de **passar imagem da web como se fosse foto real**.
-- **Não afirmar** que a augmentation "melhorou" in-distribution (ela não melhorou); justificar sua adoção pela **robustez esperada** e deixar explícito que a evidência OOD com-vs-sem-aug ainda está **pendente** (célula 8b).
+- **Não afirmar** que a augmentation "melhorou" os resultados: ela **piorou** ~2,6 pp in-distribution e **empatou** no OOD de design (mesma acurácia). Justificar a adoção do com-aug como **escolha de deploy** (robustez a captura no uso real), deixando explícito que esse benefício **não foi medido** (exige um OOD de fotos reais).
 
 ---
 
@@ -302,7 +302,7 @@ A análise ética adota uma narrativa **defesa-vs-ataque**: para cada risco (ofe
 - **Val/teste pequenos (5 img/classe):** métricas **ruidosas** (±~20 pp por imagem na classe); diferenças finas entre configurações (ex.: com vs sem aug) podem **não ser significativas**. Por isso prioriza-se F1-macro e a matriz de confusão.
 - **Treino em um único design de baralho:** viés de domínio forte; tende a falhar em outros designs, baralhos regionais, naipes estilizados — **medido** no Experimento 3.
 - **OOD é limite inferior:** o conjunto de "design diferente" usa **imagens limpas**, então mede o **gap de design**, **não** o gap de **captura** (luz/sombra/fundo/ângulo de fotos reais). O gap real esperado é **maior** que os ~35 pp medidos.
-- **OOD sem-aug ainda não medido:** a comparação de robustez com-vs-sem-aug (célula 8b) está **pendente** — o argumento "augmentation por robustez" carece, hoje, dessa evidência direta.
+- **Benefício da augmentation não comprovado:** na comparação com-vs-sem-aug, a augmentation **não melhorou** o OOD de design (mesma acurácia 0,5926; F1 0,574 vs 0,568). Como ela visa variação de **captura** e o OOD testa **design**, o ganho só seria observável num OOD de **fotos reais** — ainda não coletado.
 - **Escopo restrito a classificação:** exige **recorte prévio** de uma carta; não detecta nem segmenta múltiplas cartas.
 - **Fundos uniformes/padronização do dataset:** o modelo pode depender do contexto limpo e falhar com fundos complexos.
 - **Sem garantia de calibração:** as probabilidades de softmax podem ser mal calibradas — não devem ser lidas como confiança real sem avaliação adicional.
@@ -315,7 +315,7 @@ A análise ética adota uma narrativa **defesa-vs-ataque**: para cada risco (ofe
 
 - **Detecção com YOLO** (ex.: YOLOv8/YOLO11): estender de "1 carta recortada" para **detecção de múltiplas cartas em cena**, removendo a dependência do recorte manual — a evolução natural do escopo.
 - **OOD com fotos reais (gap de captura):** fotografar um baralho físico sob luz/fundo/ângulo variados, seguindo `docs/guia_coleta_baralho_real.md` (com cuidados de LGPD), e medir o gap que o OOD de design não cobre.
-- **Fechar a célula 8b:** medir o OOD do modelo **sem** augmentation para validar (ou refutar honestamente) a hipótese de robustez.
+- **OOD de fotos reais:** medir o gap de **captura** (fotografar um baralho físico) — é onde a augmentation deve mostrar valor, já que no OOD de **design** ela empatou.
 - **Inferência on-device na NPU via OpenVINO:** exportar o modelo para rodar localmente na NPU Intel, reforçando privacidade (LGPD) e latência — bom argumento de deploy.
 - **Mais designs no treino:** incorporar vários baralhos/estilos para reduzir o gap de design medido.
 - **App educacional/assistivo:** leitura em voz alta e exercícios de probabilidade, com processamento local.
@@ -327,7 +327,7 @@ A análise ética adota uma narrativa **defesa-vs-ataque**: para cada risco (ofe
 > Respostas curtas e corretas para as perguntas mais prováveis na banca.
 
 **1. Por que o modelo *sem* augmentation deu MAIOR que o *com* augmentation?**
-Porque o teste é **quase igual ao treino** (imagens limpas, mesmo design). A augmentation **regulariza**, e regularização custa um pouco de acurácia quando o teste é "fácil"/in-distribution (perdeu ~2,6 pp). O ganho esperado dela é em **robustez/OOD**, não no teste limpo. Adotamos o com-aug pela robustez, assumindo esse custo — mas a evidência OOD com-vs-sem-aug ainda está pendente (célula 8b).
+Porque o teste é **quase igual ao treino** (imagens limpas, mesmo design): a augmentation **regulariza** e custa um pouco de acurácia quando o teste é "fácil"/in-distribution (−2,6 pp). E no **OOD de design** ela **empatou** (mesma acurácia 0,5926). Motivo: a augmentation simula variação de **captura** (rotação/brilho/oclusão), não de **design** — por isso não ajuda neste OOD específico. Mantivemos o com-aug como escolha de **deploy** (no uso real, com fotos, espera-se ganho de robustez), declarando que isso **não foi medido** aqui.
 
 **2. Por que o feature extraction (backbone congelado) vai tão mal (38%)?**
 Porque as features pré-treinadas do **ImageNet** são **genéricas para objetos naturais** e fracas para cartas (símbolos finos, *pips*, tipografia). Congeladas, elas não capturam o que distingue uma carta da outra. O **fine-tuning** adapta essas features ao domínio e leva a acurácia de 0,385 para 0,947 (+56 pp).

@@ -36,7 +36,8 @@ Checklist das etapas que precisam de ação humana para concluir o projeto.
   `docs/01_definicao_problema.md`, `docs/03_etica_impacto.md` e na tabela do `relatorio_final_outline.md`:
   teste **94,7%** / F1-macro **0,947**, baseline 70,6%, OOD de design **59,3%** (gap ≈ 35 pp).
   Figuras/CSVs commitados em `reports/` (matrizes de confusão do teste e do OOD, `experimentos.csv`,
-  `classification_report_test.csv`). **Único pendente:** o OOD do modelo **sem** aug (saída da célula 8b).
+  `classification_report_test.csv`). OOD do modelo **sem** aug medido (0,593 — mesma acurácia do com-aug).
+  **Lado técnico 100% concluído** — resta apenas escrever o relatório/apresentação (passos 7 e 8).
 
 - [ ] **7. Confirmar a licença exata do dataset gpiosenka**
   No Kaggle a licença está marcada como *"Other"* — confirmar antes de redistribuir imagens.

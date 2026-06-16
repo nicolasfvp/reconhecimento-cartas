@@ -127,10 +127,12 @@ python -m src.predict caminho/para/carta.jpg --checkpoint models/efficientnet_b0
 O **modelo principal** é o EfficientNet-B0 com *fine-tuning* **e** *data augmentation*
 (**94,7%** de acurácia / **0,947** de F1-macro no teste Kaggle), em linha com a referência da
 literatura (~93–95%) e bem acima do baseline (70,6%). No Experimento 2, a versão **sem**
-augmentation chegou a **97,4%** no teste limpo, mas adotamos a **com** augmentation como
-principal pela robustez (a augmentation troca ~2,6 pp de acurácia in-distribution por
-generalização). Conjuntos de val/teste pequenos (5 img/classe) → ler as métricas com
-incerteza ampla; por isso priorizamos **F1-macro** e a matriz de confusão.
+augmentation chegou a **97,4%** no teste limpo e **empatou** no OOD de design (ambas 59,3%).
+Adotamos a **com** augmentation como modelo principal por ser a escolha adequada ao uso real
+(fotos, onde se espera robustez a variações de captura) — sendo transparentes que esse ganho
+**não** foi medido aqui: a augmentation simula captura, não design, e o benefício exigiria um
+OOD de fotos reais (trabalho futuro). Conjuntos de val/teste pequenos (5 img/classe) → ler as
+métricas com incerteza ampla; por isso priorizamos **F1-macro** e a matriz de confusão.
 
 > A coluna **Acurácia OOD** refere-se ao baralho de **design diferente** (imagens limpas da web),
 > medindo o *gap de design* — não a um baralho fotografado em condições reais (gap de captura,

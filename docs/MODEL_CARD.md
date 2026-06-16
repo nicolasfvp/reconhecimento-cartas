@@ -97,16 +97,17 @@ Educadores, estudantes, pesquisadores de VC, desenvolvedores de ferramentas de a
 | **Exp. 1a** | EfficientNet-B0, *feature extraction* (backbone congelado) | 0,385 | 0,363 | Features ImageNet são fracas p/ cartas |
 | **Exp. 1b** | EfficientNet-B0, *fine-tuning* do topo | 0,947 | 0,947 | +56 pp sobre 1a → fine-tuning é essencial |
 | **Exp. 2a** | Melhor modelo, **sem** *data augmentation* | 0,974 | 0,973 | Maior no teste limpo (in-distribution) |
-| **Exp. 2b** | Melhor modelo, **com** *data augmentation* ← principal | 0,947 | 0,947 | −2,6 pp in-dist; trocado por robustez (ver OOD) |
+| **Exp. 2b** | Melhor modelo, **com** *data augmentation* ← principal | 0,947 | 0,947 | −2,6 pp in-dist; **mesma acc. OOD** que sem-aug (ver 5.2) |
 
 ### 5.2 Avaliação OOD (Experimento 3)
 
 | Conjunto de avaliação | Origem | Accuracy | F1 macro | *Gap* de domínio |
 |---|---|---|---|---|
 | **Teste Kaggle (in-distribution)** | Mesmo domínio do treino | 0,947 | 0,947 | — |
-| **Baralho de design diferente (OOD)** | Imagens limpas de licença livre (web); ver `src/ood_design.py` | 0,593 | 0,574 | **gap de design ≈ 35 pp** |
+| **OOD design — modelo COM aug (principal)** | Imagens limpas de licença livre (web); ver `src/ood_design.py` | 0,593 | 0,574 | gap de design ≈ 35 pp |
+| **OOD design — modelo SEM aug** | idem | 0,593 | 0,568 | gap ≈ 38 pp |
 
-> Valores do **modelo principal** (com augmentation). O OOD do modelo **sem** augmentation é medido na célula 8b do notebook (comparação de robustez do Experimento 2) — *(a preencher quando rodar a 8b)*.
+> **Conclusão do Experimento 2 no OOD:** a *data augmentation* **não melhorou** a acurácia OOD (ambos **0,593**); a diferença está só no F1-macro (0,574 vs 0,568, dentro do ruído). Esperado: a augmentation usada simula **condições de captura** (rotação/brilho/oclusão), enquanto este OOD testa **design** — gaps de tipos diferentes. O benefício da augmentation tende a aparecer num OOD de **fotos reais** (gap de captura), que é trabalho futuro.
 
 > **O que esta linha OOD mede:** o **gap de design** (generalização para outro estilo de carta), **não** o gap de condições de captura (luz/sombra/fundo/ângulo de fotos reais). Como as imagens são renders limpos, o gap aqui é um **limite inferior** do esperado com fotos do mundo real — medir isso com um baralho fotografado é trabalho futuro (`docs/guia_coleta_baralho_real.md`).
 

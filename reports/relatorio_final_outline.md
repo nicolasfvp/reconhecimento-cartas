@@ -96,7 +96,7 @@ O dataset é aproximadamente balanceado (~144 imagens/classe em média, 7.624/53
 | Baseline: HOG + Reg. Logística | 0,706 | 0,698 | — | Referência clássica |
 | EfficientNet-B0 — Feature Extraction (FE) | 0,385 | 0,363 | — | Backbone congelado |
 | EfficientNet-B0 — Fine-Tuning (FT, com aug) | 0,947 | 0,947 | 0,593 | **Modelo principal** |
-| EfficientNet-B0 — FT **sem** augmentation | 0,974 | 0,973 | *(a medir na célula 8b)* | Maior no teste limpo |
+| EfficientNet-B0 — FT **sem** augmentation | 0,974 | 0,973 | 0,593 | Maior no teste limpo; mesma acc. OOD |
 
 > _Referência da literatura (não é resultado deste trabalho): transfer learning em cartas tende a ~93–95% de accuracy in-distribution._
 
@@ -107,7 +107,7 @@ O dataset é aproximadamente balanceado (~144 imagens/classe em média, 7.624/53
 
 ### 3.3 Experimento 2 — Com vs sem data augmentation
 
-- Resultado: **com aug 0,947** vs **sem aug 0,974** no teste limpo (sem aug **+2,6 pp** in-distribution). OOD (design) com aug = **0,593**; sem aug *(a medir na célula 8b)*.
+- Resultado: **com aug 0,947** vs **sem aug 0,974** no teste limpo (sem aug **+2,6 pp** in-distribution). OOD design: com aug **0,593** (F1 0,574); sem aug **0,593** (F1 0,568) — **mesma acurácia**; a augmentation não ajudou no gap de design.
 - Interpretação: _(preencher — a augmentation ajudou na generalização e/ou no OOD?)_
 
 ### 3.4 Experimento 3 — Avaliação OOD (gap de design)
